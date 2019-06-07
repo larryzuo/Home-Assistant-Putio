@@ -61,8 +61,6 @@ async def handle_webhook(hass, webhook_id, request):
     return
 
 async def handle_file(hass, webhook_id, data):
-    _LOGGER.warning('Test777: {}'.format(data['file_id']))
-
     zip_id = await create_zip_file(hass, data['file_id'])
     download_link = await get_download_link(hass, zip_id)
     download_file(hass, download_link, data['name'])
