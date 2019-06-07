@@ -21,3 +21,19 @@ putio:
 4. Set `https://YOUR_HOME_ASSISTANT_DOMAIN/api/webhook/putio_transfer_completed` in your [Putio account preferences(Advanced Settings)](https://app.put.io/settings/preferences) as callback url.
 
 After restarting your Home Assistant instance, all future finished Putio transfers will be downloaded automatically to the directory specified by the [Downloader component](https://www.home-assistant.io/components/downloader/) configuration.
+
+### Configuration
+
+| Parameter | Default | Description |
+|:---:|:---:|---|
+| token | none| Your Put.io OAuth token |                                                                                                                                      
+| accepted_file_types | [] | Only accepted file types will be extracted. By default all file types are accepted. |
+| retry_attempts | 5 | Number of retry attempts if the download fails. Between each attempt, there is a 30s delay. |
+
+The following config example will only extract .mp4 and .mkv files and discard all other file types:
+
+```yaml
+putio: 
+  token: OAUTH_TOKEN
+  accepted_file_types: ['.mp4', '.mkv']
+```

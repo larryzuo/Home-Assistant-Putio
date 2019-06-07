@@ -15,11 +15,13 @@ _LOGGER = logging.getLogger(__name__)
 
 BASE_URL = 'https://api.put.io/v2'
 TRANSFER_COMPLETED_ID = '{}_transfer_completed'.format(DOMAIN)
+CONF_FILE_TYPES = 'accepted_file_types'
 CONF_RETRY_ATTEMPTS = 'retry_attempts'
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
         vol.Required(CONF_TOKEN): cv.string,
+        vol.Optional(CONF_FILE_TYPES, default=['']): cv.ensure_list_csv,
         vol.Optional(CONF_RETRY_ATTEMPTS, default=5): cv.positive_int
     })
 }, extra=vol.ALLOW_EXTRA)
@@ -27,7 +29,7 @@ CONFIG_SCHEMA = vol.Schema({
 async def async_setup(hass, config):
     hass.data[DOMAIN] = config[DOMAIN]
     hass.components.webhook.async_register(
-    	DOMAIN, 'Putio', TRANSFER_COMPLETED_ID, handle_webhook)
+        DOMAIN, 'Putio', TRANSFER_COMPLETED_ID, handle_webhook)
 
     def handle_event(event):
         _LOGGER.debug('putio finished {}'.format(event.data.get('filename')))
@@ -36,7 +38,7 @@ async def async_setup(hass, config):
         with ZipFile(zip_file_path, 'r') as zip_file:
             for member in zip_file.infolist():
                 filename = os.path.basename(member.filename)
-                if filename and filename.endswith(('.mp4', '.mkv', '.avi')):
+                if filename and (not config[DOMAIN][CONF_FILE_TYPES] or filename.endswith(tuple(config[DOMAIN][CONF_FILE_TYPES]))):
                     _LOGGER.debug('extracting {}'.format(filename))
                     member.filename = filename
                     zip_file.extract(member, '{}/'.format(download_dir))
