@@ -1,0 +1,9 @@
+{
+        "domain": "putio",
+        "name": "Put.io component",
+        "documentation": "",
+        "requirements": [],
+        "dependencies": ["webhook",
+        				 "downloader"],
+        "codeowners": ["@larryzuo"]
+}
